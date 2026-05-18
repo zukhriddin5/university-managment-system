@@ -1,0 +1,46 @@
+
+services:
+  lms_core:
+    build: ./lms_core
+    container_name: lms_core
+    ports:
+      - "50051:50051"    # gRPC
+      - "8000:8000"      # REST (for frontend)
+    environment:
+      - POSTGRES_HOST=lms_db
+      - POSTGRES_DB=lmsdb
+      - POSTGRES_USER=lmsuser
+      - POSTGRES_PASSWORD=supersecret
+    depends_on:
+      - lms_db
+
+  chat_service:
+    build: ./chat_service
+    container_name: chat_service
+    ports:
+      - "50052:50052"    # gRPC
+      - "8001:8001"      # REST/websocket
+    environment:
+      - MONGO_HOST=chat_mongo
+    depends_on:
+      - chat_mongo
+
+  lms_db:
+    image: postgres:16
+    container_name: lms_db
+    environment:
+      POSTGRES_DB: lmsdb
+      POSTGRES_USER: lmsuser
+      POSTGRES_PASSWORD: supersecret
+    volumes:
+      - lms_db_data:/var/lib/postgresql/data
+
+  chat_mongo:
+    image: mongo:7
+    container_name: chat_mongo
+    volumes:
+      - chat_mongo_data:/data/db
+
+volumes:
+  lms_db_data:
+  chat_mongo_data:

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package lms;
+
+service LMSCore {
+  rpc IsEnrolled (IsEnrolledRequest) returns (IsEnrolledReply) {}
+}
+
+message IsEnrolledRequest {
+  int32 user_id = 1;
+  int32 course_id = 2;
+}
+
+message IsEnrolledReply {
+  bool enrolled = 1;
+}
